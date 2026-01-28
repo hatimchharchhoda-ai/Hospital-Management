@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import { PatientService } from '../../../services/patient-service';
-
+import { ToastService } from '../../../shareComponent/toast/toast-service';
 @Component({
   selector: 'app-appointment-popup',
   standalone: true,
@@ -28,7 +27,7 @@ export class AppointmentPopup {
 
   constructor(
     private patientService: PatientService,
-    private toastr: ToastrService
+    private toast: ToastService
   ) {}
 
   selectTime(time: string) {
@@ -37,9 +36,11 @@ export class AppointmentPopup {
 
   bookAppointment() {
     if (!this.selectedTime) {
-      this.toastr.warning('Please select a time slot');
+      this.toast.warning('Please select a time slot');
       return;
     }
+
+    this.loading = true;
 
     this.patientService.bookAppointment({
       doctorId: this.doctorId,
@@ -48,12 +49,15 @@ export class AppointmentPopup {
       startTime: this.selectedTime
     }).subscribe({
       next: () => {
-        this.toastr.success('Appointment booked successfully');
+        this.toast.success('Appointment booked successfully');
         this.loading = false;
         this.close.emit();
       },
       error: err => {
-        this.toastr.error(err.error?.message || 'Booking failed');
+        this.loading = false;
+        this.toast.error(
+          err?.error?.message || 'Booking failed'
+        );
       }
     });
   }

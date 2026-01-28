@@ -19,23 +19,13 @@ namespace backend.Controllers
         [HttpPost("link")]
         public async Task<IActionResult> LinkPatientDoctor([FromBody] PatientDoctorLinkDto dto)
         {
-            if (dto.PatientId <= 0 || dto.DoctorId <= 0)
-                return BadRequest("PatientId and DoctorId are required");
-
-            try
+            var mapping = await _service.CreateMappingAsync(dto.PatientId, dto.DoctorId);
+            return Ok(new
             {
-                var mapping = await _service.CreateMappingAsync(dto.PatientId, dto.DoctorId);
-                return Ok(new
-                {
-                    mapping.PatientDoctorId,
-                    mapping.PatientId,
-                    mapping.DoctorId
-                });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                mapping.PatientDoctorId,
+                mapping.PatientId,
+                mapping.DoctorId
+            });
         }
     }
 }

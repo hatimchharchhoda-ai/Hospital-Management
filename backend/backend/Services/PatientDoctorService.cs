@@ -1,5 +1,6 @@
 ﻿using backend.Interfaces;
 using backend.Models;
+using backend.Exceptions;
 
 namespace backend.Services
 {
@@ -23,12 +24,12 @@ namespace backend.Services
         {
             // 1️⃣ Validate input
             if (patientId <= 0 || doctorId <= 0)
-                throw new ArgumentException("PatientId and DoctorId must be valid");
+                throw new AppException("PatientId and DoctorId must be valid.");
 
             // 2️⃣ Check for duplicate
             var existing = await _repository.GetByPatientAndDoctorAsync(patientId, doctorId);
             if (existing != null)
-                throw new InvalidOperationException("This patient is already linked with the doctor");
+                throw new AppException("This patient is already linked with the doctor.");
 
             // 3️⃣ Create new mapping
             var newMapping = new PatientDoctor
@@ -39,6 +40,7 @@ namespace backend.Services
 
             return await _repository.CreateAsync(newMapping);
         }
+
         public Task<List<Doctor>> GetDoctorsByPatientIdAsync(int patientId)
         {
             return _repository.GetDoctorsByPatientIdAsync(patientId);

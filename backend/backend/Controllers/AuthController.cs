@@ -25,7 +25,6 @@ namespace backend.Controllers
         public async Task<IActionResult> PatientLogin([FromBody] LoginPatientDto dto)
         {
             var token = await _authService.LoginPatientAsync(dto);
-            if (token == null) return Unauthorized("Invalid credentials");
             return Ok(new { token });
         }
 
@@ -43,7 +42,6 @@ namespace backend.Controllers
         public async Task<IActionResult> DoctorLogin([FromBody] LoginDoctorDto dto)
         {
             var token = await _authService.LoginDoctorAsync(dto);
-            if (token == null) return Unauthorized("Invalid credentials");
             return Ok(new { token });
         }
 
@@ -51,14 +49,9 @@ namespace backend.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> DoctorRegister([FromBody] Doctor doctor)
         {
+            // This call will throw AppException if doctor cannot register
             var canRegister = await _doctorService.VerifyDoctorCanRegisterAsync(doctor.Email, doctor.Mobile);
-            if (!canRegister)
-            {
-                return StatusCode(StatusCodes.Status409Conflict, new
-                {
-                    message = "Doctor already registered with this email or mobile number."
-                });
-            }
+
             var created = await _authService.RegisterDoctorAsync(doctor);
             return Ok(created);
         }

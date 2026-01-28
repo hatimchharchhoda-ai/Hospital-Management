@@ -4,7 +4,7 @@ import { DoctorLogin } from './login/doctor-login/doctor-login';
 import { DoctorSignup } from './login/doctor-signup/doctor-signup';
 import { PatientSignup } from './login/patient-signup/patient-signup';
 import { Phome } from './patientComponent/home/home';
-import { Dhome } from './doctorComponent/home/home';
+import { DoctorHome } from './doctorComponent/home/home';
 import { Appointment } from './patientComponent/appointment/appointment';
 import { History } from './doctorComponent/history/history';
 import { Schedule } from './doctorComponent/schedule/schedule';
@@ -52,7 +52,7 @@ export const routes: Routes = [
     // canActivate: [authGuard],
     data: { role: 'Doctor' },
     children: [
-      { path: 'home', component: Dhome },
+      { path: 'home', component: DoctorHome },
       { path: 'history', component: History },
       { path: 'schedule', component: Schedule },
     ]

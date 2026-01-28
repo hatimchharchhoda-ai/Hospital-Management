@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { PatientService } from '../../services/patient-service';
 import { TokenService } from '../../services/token-service';
-import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../shareComponent/toast/toast-service';
 
 @Component({
   selector: 'app-scheduled',
@@ -27,7 +27,7 @@ export class Scheduled {
   constructor(
     private patientService: PatientService,
     private tokenService: TokenService,
-    private toastr: ToastrService,
+    private toast: ToastService, // ✅ inject
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -38,21 +38,21 @@ export class Scheduled {
   loadAppointments() {
     const patientId = Number(this.tokenService.getUserId());
 
-    this.patientService
-      .getUpcomingAppointments(patientId)
-      .subscribe({
-        next: res => {
-          this.appointments = res;
-          this.cdr.detectChanges();
-        },
-        error: (err: { error: { message: any; }; }) => this.toastr.error(err.error?.message || 'Failed to load appointments')
-      });
+    this.patientService.getUpcomingAppointments(patientId).subscribe({
+      next: (res) => {
+        this.appointments = res;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Failed to load appointments');
+      },
+    });
   }
 
   openEdit(appointment: any) {
     this.selectedAppointment = {
       ...appointment,
-      appointmentDate: appointment.appointmentDate
+      appointmentDate: appointment.appointmentDate,
     };
   }
 
@@ -64,20 +64,21 @@ export class Scheduled {
       appointmentDate: this.selectedAppointment.appointmentDate,
       startTime: this.selectedAppointment.startTime,
       patientId: this.selectedAppointment.patientId,
-      doctorId: this.selectedAppointment.doctorId
+      doctorId: this.selectedAppointment.doctorId,
     };
 
     this.patientService.updateAppointment(payload).subscribe({
       next: () => {
-        this.toastr.success('Appointment updated successfully');
+        this.toast.success('Appointment updated successfully'); // ✅
         this.loading = false;
         this.selectedAppointment = null;
         this.loadAppointments();
         this.cdr.detectChanges();
       },
-      error: (err: { error: { message: any; }; }) => {
-        this.toastr.error(err.error?.message || 'Update failed');
-      }
+      error: (err) => {
+        this.loading = false;
+        this.toast.error(err.error?.message || 'Update failed'); // ✅
+      },
     });
   }
 }

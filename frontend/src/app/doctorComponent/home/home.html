@@ -1,1 +1,20 @@
-<p>home works!</p>
+<div class="container mt-4">
+  <!-- 🔍 Search Bar -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by patient name or time (e.g. 10:30)"
+        [(ngModel)]="searchText"
+      />
+    </div>
+  </div>
+
+  <!-- 📋 Patient List -->
+  <app-doctor-today-patient-list
+    [appointments]="todayAppointments"
+    [searchText]="searchText"
+    (updated)="onAppointmentUpdated()"
+  ></app-doctor-today-patient-list>
+</div>

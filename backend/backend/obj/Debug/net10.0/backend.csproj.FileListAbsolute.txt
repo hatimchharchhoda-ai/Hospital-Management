@@ -161,3 +161,4 @@ C:\Users\hatim.chharchhoda\hospital-management-system\backend\backend\obj\Debug\
 C:\Users\hatim.chharchhoda\hospital-management-system\backend\backend\obj\Debug\net10.0\backend.pdb
 C:\Users\hatim.chharchhoda\hospital-management-system\backend\backend\obj\Debug\net10.0\backend.genruntimeconfig.cache
 C:\Users\hatim.chharchhoda\hospital-management-system\backend\backend\obj\Debug\net10.0\ref\backend.dll
+C:\Users\hatim.chharchhoda\hospital-management-system\backend\backend\obj\Debug\net10.0\backend.sourcelink.json

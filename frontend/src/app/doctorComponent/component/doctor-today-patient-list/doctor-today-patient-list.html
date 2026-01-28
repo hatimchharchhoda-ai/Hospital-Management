@@ -1,0 +1,37 @@
+<div class="card shadow-sm">
+    <div class="card-header bg-white fw-semibold">
+        Today's Appointments
+    </div>
+
+    <ul class="list-group list-group-flush">
+        <li *ngFor="let a of filteredAppointments"
+            class="list-group-item d-flex align-items-center justify-content-between">
+            <!-- ⏰ Time -->
+            <div class="fw-bold text-primary" style="width: 90px">
+                {{ a.startTime }}
+            </div>
+
+            <!-- 👤 Name -->
+            <div class="flex-grow-1 fw-semibold">
+                {{ a.patientName }}
+            </div>
+
+            <!-- 📞 Mobile -->
+            <div class="text-muted me-3">
+                {{ a.patientMobile }}
+            </div>
+
+            <!-- 🏷 Status -->
+            <select class="form-select form-select-sm w-auto" [ngModel]="a.status"
+                (ngModelChange)="updateStatus(a, $event)">
+                <option [value]="1">Booked</option>
+                <option [value]="2">Cancelled</option>
+                <option [value]="3">Completed</option>
+            </select>
+        </li>
+
+        <li *ngIf="filteredAppointments.length === 0" class="list-group-item text-center text-muted">
+            No appointments found
+        </li>
+    </ul>
+</div>

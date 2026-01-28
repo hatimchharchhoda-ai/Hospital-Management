@@ -1,0 +1,28 @@
+table th,
+table td {
+  vertical-align: middle;
+}
+
+.modal {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.badge {
+  font-size: 0.85rem;
+}
+
+.custom-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-modal .modal-dialog {
+  max-width: 500px;
+  width: 100%;
+}

@@ -1,1 +1,120 @@
-<p>schedule works!</p>
+<div class="container mt-4">
+  <h3 class="mb-3">Doctor Schedule</h3>
+
+  <!-- Filters -->
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by name, mobile or date"
+        [(ngModel)]="searchText"
+        (input)="applyFilter()"
+      />
+    </div>
+
+    <div class="col-md-3">
+      <input
+        type="date"
+        class="form-control"
+        [(ngModel)]="selectedDate"
+        (change)="applyFilter()"
+      />
+    </div>
+  </div>
+
+  <!-- Appointment Table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Patient</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th style="width: 120px;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of filteredAppointments">
+          <td>
+            <strong>{{ a.patientName }}</strong><br />
+            <small class="text-muted">{{ a.patientMobile }}</small>
+          </td>
+          <td>{{ a.appointmentDate }}</td>
+          <td>{{ a.startTime }}</td>
+          <td>
+            <span class="badge bg-info">
+              {{ a.status }}
+            </span>
+          </td>
+          <td>
+            <button
+              class="btn btn-sm btn-outline-primary"
+              (click)="openEditModal(a)"
+            >
+              Edit
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="filteredAppointments.length === 0">
+          <td colspan="5" class="text-center text-muted">
+            No appointments found
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 🔔 Edit Modal -->
+<div class="modal fade" id="editModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Edit Appointment</h5>
+        <button class="btn-close" (click)="closeModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-3">
+          <label>Date</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="editAppointment.appointmentDate"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label>Time</label>
+          <input
+            type="time"
+            class="form-control"
+            [(ngModel)]="editAppointment.startTime"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label>Status</label>
+          <select
+            class="form-select"
+            [(ngModel)]="editAppointment.status"
+          >
+            <option [value]="1">Scheduled</option>
+            <option [value]="2">Cancelled</option>
+            <option [value]="3">Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="updateAppointment()">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

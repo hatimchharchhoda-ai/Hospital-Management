@@ -1,13 +1,13 @@
-﻿using Microsoft.OpenApi.Models;
-using backend.Data;
+﻿using backend.Data;
 using backend.Interfaces;
+using backend.Middleware;
 using backend.Reposetory;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -118,6 +118,9 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 var app = builder.Build();
 
+// 🔥 Global exception middleware MUST be FIRST
+app.UseExceptionMiddleware();
+
 // Swagger
 if (app.Environment.IsDevelopment())
 {
@@ -126,9 +129,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseCors(MyAllowSpecificOrigins);
 
-app.UseAuthentication(); // 🔐 MUST COME FIRST
+// 🔐 Authentication & Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

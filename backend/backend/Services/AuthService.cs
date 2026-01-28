@@ -1,6 +1,7 @@
 ﻿using backend.DTOs;
 using backend.Interfaces;
 using backend.Models;
+using backend.Exceptions;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,12 +11,12 @@ namespace backend.Services
 {
     public interface IAuthService
     {
-        Task<string?> LoginPatientAsync(LoginPatientDto dto);
-        Task<Patient?> RegisterPatientAsync(Patient patient);
+        Task<string> LoginPatientAsync(LoginPatientDto dto);
+        Task<Patient> RegisterPatientAsync(Patient patient);
 
         // DOCTOR (FUTURE)
-        Task<string?> LoginDoctorAsync(LoginDoctorDto dto);
-        Task<Doctor?> RegisterDoctorAsync(Doctor doctor);
+        Task<string> LoginDoctorAsync(LoginDoctorDto dto);
+        Task<Doctor> RegisterDoctorAsync(Doctor doctor);
     }
 
     public class AuthService : IAuthService
@@ -31,49 +32,52 @@ namespace backend.Services
 
         // ---------------- PATIENT ----------------
 
-        public async Task<string?> LoginPatientAsync(LoginPatientDto dto)
+        public async Task<string> LoginPatientAsync(LoginPatientDto dto)
         {
             var patient = await _authRepository.GetPatientByMobileAsync(dto.Mobile);
-            if (patient == null) return null;
+            if (patient == null)
+                throw new AppException("Patient not found with the provided mobile number.");
 
-            // Verify password
             bool validPassword = BCrypt.Net.BCrypt.Verify(dto.Password, patient.Password);
-            if (!validPassword) return null;
+            if (!validPassword)
+                throw new AppException("Invalid password.");
 
             return GenerateJwt(patient.PatientId.ToString(), patient.Name, "Patient");
         }
 
-        public async Task<Patient?> RegisterPatientAsync(Patient patient)
+        public async Task<Patient> RegisterPatientAsync(Patient patient)
         {
+            var existingPatient = await _authRepository.GetPatientByMobileAsync(patient.Mobile);
+            if (existingPatient != null)
+                throw new AppException("Mobile number is already registered.");
+
             return await _authRepository.AddPatientAsync(patient);
         }
 
         // ---------------- DOCTOR (FUTURE) ----------------
-        
-        public async Task<string?> LoginDoctorAsync(LoginDoctorDto dto)
+
+        public async Task<string> LoginDoctorAsync(LoginDoctorDto dto)
         {
-            // Fetch doctor by email OR mobile
             var doctor = await _authRepository.GetByEmailOrMobileAsync(dto.Identifier);
+            if (doctor == null)
+                throw new AppException("Doctor not found with the provided identifier.");
 
-            if (doctor == null) return null;
-
-            // Verify password
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, doctor.Password))
-                return null;
+                throw new AppException("Invalid password.");
 
-            // Generate JWT (use FullName, not Name)
-            return GenerateJwt(
-                doctor.DoctorId.ToString(),
-                doctor.FullName,
-                "Doctor"
-    );
+            return GenerateJwt(doctor.DoctorId.ToString(), doctor.FullName, "Doctor");
         }
 
-        public async Task<Doctor?> RegisterDoctorAsync(Doctor doctor)
+        public async Task<Doctor> RegisterDoctorAsync(Doctor doctor)
         {
+            var existingDoctor = await _authRepository.GetByEmailOrMobileAsync(doctor.Email ?? doctor.Mobile);
+            if (existingDoctor != null)
+                throw new AppException("Email or mobile is already registered.");
+
             return await _authRepository.RegisterDoctorAsync(doctor);
         }
-        
+
+        // ---------------- JWT GENERATION ----------------
 
         private string GenerateJwt(string id, string name, string role)
         {
@@ -87,7 +91,7 @@ namespace backend.Services
                     new Claim(ClaimTypes.NameIdentifier, id),
                     new Claim(ClaimTypes.Name, name),
                     new Claim(ClaimTypes.Role, role)
-                }),     
+                }),
                 Expires = DateTime.UtcNow.AddMinutes(
                     Convert.ToDouble(_config["Jwt:ExpireMinutes"])
                 ),
@@ -103,5 +107,4 @@ namespace backend.Services
             return tokenHandler.WriteToken(token);
         }
     }
-
 }
