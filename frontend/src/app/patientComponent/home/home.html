@@ -1,0 +1,39 @@
+<div class="container-fluid mt-4">
+  <!-- Search + Add -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <input
+      type="text"
+      class="form-control w-75"
+      placeholder="Search doctor by name, email or mobile"
+      [(ngModel)]="searchText"
+    />
+
+    <button class="btn btn-primary ms-3" (click)="openAddDoctorModal()">
+      + Add Doctor
+    </button>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="row">
+    <!-- Left -->
+    <div class="col-md-8">
+      <app-doctor-list
+        [searchText]="searchText"
+        (doctorAdded)="reloadDoctors()">
+      </app-doctor-list>
+    </div>
+
+    <!-- Right -->
+    <div class="col-md-4">
+      <app-today-appointments></app-today-appointments>
+    </div>
+  </div>
+</div>
+
+<app-add-doctor
+  (doctorAdded)="reloadDoctors()">
+</app-add-doctor>
+
+<app-add-doctor
+  (doctorAdded)="onDoctorAdded()">
+</app-add-doctor>

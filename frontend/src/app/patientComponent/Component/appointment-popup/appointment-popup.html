@@ -1,0 +1,40 @@
+<div class="modal-backdrop fade show"></div>
+
+<div class="modal show d-block">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Select Time – {{ date | date:'fullDate' }}
+        </h5>
+        <button class="btn-close" (click)="close.emit()"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Time Slots -->
+        <div class="slot-grid mb-3">
+          <button
+            *ngFor="let time of timeSlots"
+            class="btn"
+            [class.btn-primary]="selectedTime === time"
+            [class.btn-outline-primary]="selectedTime !== time"
+            (click)="selectTime(time)"
+            [disabled]="loading">
+            {{ time }}
+          </button>
+        </div>
+
+        <!-- Book Button -->
+        <button
+          class="btn btn-success w-100"
+          (click)="bookAppointment()"
+          [disabled]="loading">
+          Book Appointment
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>

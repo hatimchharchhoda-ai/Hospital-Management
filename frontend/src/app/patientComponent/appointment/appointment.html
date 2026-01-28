@@ -1,0 +1,30 @@
+<div class="container mt-4">
+    <h4 class="fw-bold mb-4">Select Appointment Date</h4>
+
+    <!-- Calendar -->
+    <div class="calendar-wrapper shadow-sm">
+
+        <!-- Weekday Header -->
+        <div class="calendar-header">
+            <div *ngFor="let day of weekDays">{{ day }}</div>
+        </div>
+
+        <!-- Calendar Grid -->
+        <div class="calendar-body">
+            <div *ngFor="let date of calendarDays" class="calendar-cell" [class.empty]="!date"
+                [class.selected]="date && selectedDate?.toDateString() === date.toDateString()"
+                (click)="openSlots(date)">
+                <ng-container *ngIf="date">
+                    <span class="date">{{ date | date:'dd' }}</span>
+                    <small class="month">{{ date | date:'MMM' }}</small>
+                </ng-container>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Appointment Popup -->
+<app-appointment-popup *ngIf="showPopup && selectedDate" [doctorId]="doctorId" [patientId]="patientId"
+    [date]="selectedDate" (close)="closePopup()">
+</app-appointment-popup>

@@ -1,0 +1,53 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+
+      <div class="card shadow">
+        <div class="card-body">
+
+          <h3 class="text-center mb-4">Doctor Login</h3>
+
+          <form [formGroup]="doctorLoginForm" (ngSubmit)="onLogin()">
+
+            <div class="mb-3">
+              <label class="form-label">Email or Mobile</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="identifier"
+                placeholder="Enter email or mobile">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                formControlName="password">
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn-primary w-100"
+              [disabled]="doctorLoginForm.invalid || isSubmitting">
+              {{ isSubmitting ? 'Logging in...' : 'Login' }}
+            </button>
+
+          </form>
+
+          <div class="text-center mt-3">
+            <p>
+              Create Account?
+              <a routerLink="/doctor-signup">Sign up here</a>
+            </p>
+            <button class="btn btn-outline-secondary w-100" routerLink="/patient-login">
+              Login as Patient
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

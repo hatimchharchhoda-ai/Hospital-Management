@@ -1,0 +1,18 @@
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    Today’s Appointments
+  </div>
+
+  <div class="card-body">
+    <div *ngFor="let appt of appointments" class="appointment-slot">
+      <div class="time">{{ appt.startTime }}</div>
+      <div class="details">
+        Dr. {{ appt.doctorName }}
+      </div>
+    </div>
+
+    <div *ngIf="appointments.length === 0" class="text-muted text-center">
+      No appointments today
+    </div>
+  </div>
+</div>

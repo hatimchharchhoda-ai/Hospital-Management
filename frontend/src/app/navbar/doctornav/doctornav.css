@@ -1,0 +1,40 @@
+.hospital-navbar {
+  background-color: #0549af; /* medical blue */
+  padding: 12px 24px;
+}
+
+.nav-link {
+  color: #ffffff !important;
+  font-weight: 500;
+  position: relative;
+}
+
+.nav-link.active {
+  color: #c9f30d !important; /* green */
+  font-weight: 600;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #198754;
+  border-radius: 2px;
+}
+
+/* Logo styling */
+.hmanage-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'Segoe UI', sans-serif;
+  letter-spacing: 1px;
+}
+
+.hmanage-logo span {
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-weight: 400;
+}

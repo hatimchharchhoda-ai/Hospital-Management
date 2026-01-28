@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-dark hospital-navbar">
+  <div class="container-fluid">
+
+    <!-- LEFT: LOGO -->
+    <span class="navbar-brand hmanage-logo">
+      H<span>manage</span>
+    </span>
+
+    <!-- CENTER: MENU -->
+    <div class="collapse navbar-collapse justify-content-center">
+      <ul class="navbar-nav gap-4">
+        <li class="nav-item">
+          <a
+            routerLink="/patient/home"
+            routerLinkActive="active"
+            class="nav-link"
+          >
+            Home
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a
+            routerLink="/patient/scheduled"
+            routerLinkActive="active"
+            class="nav-link"
+          >
+            Scheduled
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- RIGHT: LOGOUT -->
+    <button class="btn btn-outline-light" (click)="logout()">
+      Logout
+    </button>
+
+  </div>
+</nav>

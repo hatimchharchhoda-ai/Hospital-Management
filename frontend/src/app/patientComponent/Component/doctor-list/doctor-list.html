@@ -1,0 +1,21 @@
+<div *ngFor="let doctor of filteredDoctors"
+     class="doctor-card"
+     (click)="goToDoctor(doctor.doctorId)">
+
+  <div class="d-flex justify-content-between">
+    <div>
+      <h5 class="fw-bold mb-1">Dr. {{ doctor.fullName }}</h5>
+      <small class="text-muted">{{ doctor.email }}</small>
+    </div>
+
+    <div class="text-end">
+      <span class="badge bg-success">{{ doctor.mobile }}</span>
+    </div>
+  </div>
+</div>
+
+@if (filteredDoctors.length === 0) {
+  <div class="text-muted text-center mt-4">
+    No doctors added yet
+  </div>
+}
