@@ -37,7 +37,8 @@ export class Scheduled {
 
   loadAppointments() {
     const patientId = Number(this.tokenService.getUserId());
-
+    console.log("hiiii: ",patientId);
+    
     this.patientService.getUpcomingAppointments(patientId).subscribe({
       next: (res) => {
         this.appointments = res;

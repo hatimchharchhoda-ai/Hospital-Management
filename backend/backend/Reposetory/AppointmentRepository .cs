@@ -187,6 +187,30 @@ namespace backend.Reposetory
             );
         }
 
+        // Get all appointments for a specific doctor
+        public async Task<List<AppointmentListDto>> GetAllByDoctorAsync(int doctorId)
+        {
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId) // ✅ ONLY FILTER
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.StartTime)
+                .Select(a => new AppointmentListDto
+                {
+                    AppointmentId = a.AppointmentId,
+                    AppointmentDate = a.AppointmentDate,
+                    StartTime = a.StartTime,
+                    Status = a.Status,
+                    DoctorId = a.DoctorId,
+                    DoctorName = a.Doctor.FullName,
+                    PatientId = a.PatientId,
+                    PatientName = a.Patient.Name
+                })
+                .ToListAsync();
+        }
+
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

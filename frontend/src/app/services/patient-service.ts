@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, inject, Injectable } from '@angular/core';
+import { PrescriptionModel } from '../models/prescriptionModel';
 
 @Injectable({
   providedIn: 'root',
@@ -56,6 +57,12 @@ export class PatientService {
     return this.http.put(
       `${this.baseUrl}/appointments/update`,
       payload
+    );
+  }
+
+  getPrescriptions(patientId: number, doctorId: number) {
+    return this.http.get<PrescriptionModel[]>(
+      `${this.baseUrl}/${patientId}/prescriptions/${doctorId}`
     );
   }
 }

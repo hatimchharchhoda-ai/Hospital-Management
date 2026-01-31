@@ -1,0 +1,39 @@
+.prescription-card {
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prescription-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.prescription-img {
+  height: 200px;
+  object-fit: cover;
+  cursor: pointer;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.accordion-button {
+  background-color: #f8f9fa;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+}
+
+.image-modal {
+  display: block;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+  border-radius: 12px;
+}
+
+.btn i {
+  margin-right: 4px;
+}

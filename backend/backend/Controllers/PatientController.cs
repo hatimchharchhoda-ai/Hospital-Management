@@ -12,15 +12,18 @@ namespace backend.Controllers
         private readonly IPatientService _patientService;
         private readonly IPatientDoctorService _patientDoctorService;
         private readonly IAppointmentService _appointmentService;
+        private readonly IPrescriptionService _prescriptionService;
 
         public PatientController(
             IPatientService patientService,
             IPatientDoctorService patientDoctorService,
-            IAppointmentService appointmentService)
+            IAppointmentService appointmentService,
+            IPrescriptionService prescriptionService)
         {
             _patientService = patientService;
             _patientDoctorService = patientDoctorService;
             _appointmentService = appointmentService;
+            _prescriptionService = prescriptionService;
         }
 
         // 🔹 Get all patients
@@ -106,6 +109,26 @@ namespace backend.Controllers
         {
             await _appointmentService.UpdateAppointmentForPatientAsync(request);
             return Ok(new { message = "Appointment updated successfully." });
+        }
+
+        // 🧑‍🦱 Get all prescriptions for this patient
+        [HttpGet("{patientId}/prescriptions/{doctorId}")]
+        public async Task<IActionResult> GetPrescriptionsByPatient(int patientId, int doctorId)
+        {
+            var prescriptions = await _prescriptionService
+                .GetByPatientIdAsync(patientId, doctorId);
+
+            return Ok(prescriptions);
+        }
+
+        // 🧑‍🦱 Get single prescription
+        [HttpGet("prescription/{prescriptionId}")]
+        public async Task<IActionResult> GetPrescription(int prescriptionId)
+        {
+            var prescription = await _prescriptionService
+                .GetByIdAsync(prescriptionId);
+
+            return Ok(prescription);
         }
     }
 }

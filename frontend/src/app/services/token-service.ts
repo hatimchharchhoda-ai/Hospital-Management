@@ -32,10 +32,15 @@ export class TokenService {
   // ✅ Check login using token expiry
   isLoggedIn(): boolean {
     const decoded = this.decodeToken();
-    if (!decoded || !decoded.exp) return false;
+    if (!decoded) return false;
+
+    // If exp is missing, trust token presence (ASP.NET will still validate)
+    if (!decoded.exp) return true;
 
     const now = Math.floor(Date.now() / 1000);
-    return decoded.exp > now;
+    
+    // Add 30s leeway for clock skew
+    return decoded.exp > (now - 30);
   }
 
   // ================= JWT DECODE =================

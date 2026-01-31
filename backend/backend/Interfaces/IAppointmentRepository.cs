@@ -17,5 +17,6 @@ namespace backend.Interfaces
         Task UpdateAppointmentAsync(Appointment appointment);
         Task<bool> IsPatientAlreadyBookedExcludingAppointmentAsync(int appointmentId,int doctorId,int patientId,DateOnly appointmentDate);
         Task<int> GetSlotCountExcludingAppointmentAsync(int appointmentId,int doctorId,DateOnly appointmentDate,TimeOnly startTime);
+        Task<List<AppointmentListDto>> GetAllByDoctorAsync(int doctorId);
     }
 }

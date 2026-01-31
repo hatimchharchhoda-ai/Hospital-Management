@@ -12,15 +12,18 @@ namespace backend.Controllers
         private readonly IDoctorService _doctorService;
         private readonly IPatientDoctorService _patientDoctorService;
         private readonly IAppointmentService _appointmentService;
+        private readonly IPrescriptionService _prescriptionService;
 
         public DoctorController(
             IDoctorService doctorService,
             IPatientDoctorService patientDoctorService,
-            IAppointmentService appointmentService)
+            IAppointmentService appointmentService,
+            IPrescriptionService prescriptionService)
         {
             _doctorService = doctorService;
             _patientDoctorService = patientDoctorService;
             _appointmentService = appointmentService;
+            _prescriptionService = prescriptionService;
         }
 
         // 🔹 Verify doctor
@@ -69,6 +72,47 @@ namespace backend.Controllers
         {
             await _appointmentService.DoctorUpdateAppointmentAsync(request);
             return Ok(new { message = "Appointment updated successfully." });
+        }
+
+        // 🔹 Create prescription
+        [HttpPost("createPrescription")]
+        public async Task<IActionResult> CreatePrescription(
+           [FromForm] CreatePrescriptionDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var prescription = await _prescriptionService.CreateAsync(dto);
+
+            return Ok(prescription);
+        }
+
+        // 👨‍⚕️ Get all prescriptions created by this doctor of particular patient
+        [HttpGet("{doctorId}/prescriptions/{patientId}")]
+        public async Task<IActionResult> GetPrescriptionsByDoctor(int doctorId, int patientId )
+        {
+            var prescriptions = await _prescriptionService
+                .GetByDoctorIdAsync(doctorId, patientId);
+
+            return Ok(prescriptions);
+        }
+
+        // 👨‍⚕️ Get single prescription
+        [HttpGet("prescription/{prescriptionId}")]
+        public async Task<IActionResult> GetPrescription(int prescriptionId)
+        {
+            var prescription = await _prescriptionService
+                .GetByIdAsync(prescriptionId);
+
+            return Ok(prescription);
+        }
+
+        // 🔹 Get all appointments for a doctor
+        [HttpGet("{doctorId}/appointments/all")]
+        public async Task<IActionResult> GetAllAppointmentsByDoctor(int doctorId)
+        {
+            var appointments = await _appointmentService.GetDoctorAppointmentsAsync(doctorId);
+            return Ok(appointments);
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using backend.Data;
+using backend.Helpers;
 using backend.Interfaces;
 using backend.Middleware;
 using backend.Reposetory;
 using backend.Services;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
@@ -58,6 +61,25 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
 });
+
+// Cloudinary settings
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddSingleton(provider =>
+{
+    var config = provider
+        .GetRequiredService<IOptions<CloudinarySettings>>()
+        .Value;
+
+    var account = new Account(
+        config.CloudName,
+        config.ApiKey,
+        config.ApiSecret
+    );
+
+    return new Cloudinary(account);
+});
+
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
@@ -114,6 +136,10 @@ builder.Services.AddScoped<IPatientDoctorService, PatientDoctorService>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
+builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
+builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
+
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 // ===================== APP =====================
 
 var app = builder.Build();

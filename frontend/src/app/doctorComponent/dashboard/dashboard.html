@@ -1,0 +1,103 @@
+<div class="container-fluid py-4">
+
+  <!-- 🔹 Dashboard Header -->
+  <h4 class="mb-4 fw-semibold">Doctor Dashboard</h4>
+
+  <!-- 🔹 Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Today</h6>
+          <h3 class="fw-bold">{{ todayAppointments.length }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card shadow-sm text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Upcoming</h6>
+          <h3 class="fw-bold">{{ upcomingAppointments.length }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-2">
+      <div class="card shadow-sm text-center border-primary">
+        <div class="card-body">
+          <h6>Booked</h6>
+          <h4 class="text-primary">{{ bookedCount }}</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-2">
+      <div class="card shadow-sm text-center border-danger">
+        <div class="card-body">
+          <h6>Cancelled</h6>
+          <h4 class="text-danger">{{ cancelledCount }}</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-2">
+      <div class="card shadow-sm text-center border-success">
+        <div class="card-body">
+          <h6>Completed</h6>
+          <h4 class="text-success">{{ completedCount }}</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Chart + Today List -->
+  <div class="row mt-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Appointment Status</div>
+        <div class="card-body">
+          <canvas #statusChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Today's Appointments</div>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of todayAppointments">
+                <td>{{ a.patientName }}</td>
+                <td>{{ a.appointmentDate }}</td>
+                <td>{{ a.startTime }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                      'bg-primary': a.status === 1,
+                      'bg-danger': a.status === 2,
+                      'bg-success': a.status === 3
+                    }">
+                    {{ getStatusLabel(a.status) }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="todayAppointments.length === 0">
+                <td colspan="4" class="text-center text-muted py-3">
+                  No appointments today
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

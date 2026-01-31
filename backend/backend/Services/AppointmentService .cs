@@ -1,7 +1,8 @@
 ﻿using backend.DTOs;
+using backend.Exceptions;
 using backend.Interfaces;
 using backend.Models;
-using backend.Exceptions;
+using backend.Reposetory;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
@@ -15,6 +16,7 @@ namespace backend.Services
         Task<List<AppointmentListDto>> GetUpcomingAppointmentsForPatientAsync(int patientId);
         Task UpdateAppointmentForPatientAsync(UpdateAppointmentRequest request);
         Task DoctorUpdateAppointmentAsync(DoctorUpdateAppointmentRequest request);
+        Task<List<AppointmentListDto>> GetDoctorAppointmentsAsync(int doctorId);
     }
 
     public class AppointmentService : IAppointmentService
@@ -122,6 +124,11 @@ namespace backend.Services
 
             await _appointmentRepo.UpdateAppointmentAsync(appointment);
             await _appointmentRepo.SaveChangesAsync();
+        }
+
+        public async Task<List<AppointmentListDto>> GetDoctorAppointmentsAsync(int doctorId)
+        {
+            return await _appointmentRepo.GetAllByDoctorAsync(doctorId);
         }
     }
 }

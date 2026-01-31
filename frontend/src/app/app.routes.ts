@@ -6,7 +6,7 @@ import { PatientSignup } from './login/patient-signup/patient-signup';
 import { Phome } from './patientComponent/home/home';
 import { DoctorHome } from './doctorComponent/home/home';
 import { Appointment } from './patientComponent/appointment/appointment';
-import { History } from './doctorComponent/history/history';
+import { Dashboard } from './doctorComponent/dashboard/dashboard';
 import { Schedule } from './doctorComponent/schedule/schedule';
 import { authGuard } from './guards/auth.guard';
 import { Unauthorized } from './unauthorized/unauthorized';
@@ -14,6 +14,8 @@ import { DoctorNavbar } from './layout/doctor-navbar/doctor-navbar';
 import { PatientNavbar } from './layout/patient-navbar/patient-navbar';
 import { AuthNavbar } from './layout/auth-navbar/auth-navbar';
 import { Scheduled } from './patientComponent/scheduled/scheduled';
+import { PatientPrescriptionComponent } from './patientComponent/prescription/prescription';
+import { Medications } from './doctorComponent/medications/medications';
 
 export const routes: Routes = [
   // 🔐 Auth routes (NO NAVBAR)
@@ -41,7 +43,8 @@ export const routes: Routes = [
         path: ':doctorId/appointment',
         component: Appointment
       },
-      { path: 'scheduled', component: Scheduled }
+      { path: 'scheduled', component: Scheduled },
+      { path: 'prescription', component: PatientPrescriptionComponent },
     ]
   },
 
@@ -53,8 +56,9 @@ export const routes: Routes = [
     data: { role: 'Doctor' },
     children: [
       { path: 'home', component: DoctorHome },
-      { path: 'history', component: History },
+      { path: 'dashboard', component: Dashboard },
       { path: 'schedule', component: Schedule },
+      { path: 'medications', component: Medications },
     ]
   },
 

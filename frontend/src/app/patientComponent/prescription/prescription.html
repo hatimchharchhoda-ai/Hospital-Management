@@ -1,0 +1,156 @@
+<div class="container my-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-semibold text-primary mb-0">
+      <i class="bi bi-file-medical"></i> My Prescriptions
+    </h4>
+
+    <input
+      type="text"
+      class="form-control w-25"
+      placeholder="Search doctor..."
+      [(ngModel)]="searchText"
+      (input)="filterDoctors()"
+    />
+  </div>
+
+  <!-- Doctor List -->
+  <div class="accordion" id="doctorAccordion">
+
+    <div
+      class="accordion-item mb-2 shadow-sm"
+      *ngFor="let doctor of filteredDoctors"
+    >
+      <!-- Doctor Header -->
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          (click)="toggleDoctor(doctor)"
+        >
+          <div class="d-flex flex-column">
+            <span class="fw-semibold">{{ doctor.fullName }}</span>
+            <small class="text-muted">
+              {{ doctor.email }} • {{ doctor.mobile }}
+            </small>
+          </div>
+        </button>
+      </h2>
+
+      <!-- Doctor Body -->
+      <div
+        class="accordion-collapse collapse"
+        [class.show]="expandedDoctorId === doctor.doctorId"
+      >
+        <div class="accordion-body">
+
+          <!-- Loading -->
+          <div
+            class="text-center py-4"
+            *ngIf="loadingDoctorId === doctor.doctorId"
+          >
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2 text-muted">Loading prescriptions...</p>
+          </div>
+
+          <!-- Prescription List -->
+          <div
+            class="row g-3"
+            *ngIf="loadingDoctorId !== doctor.doctorId"
+          >
+            <div
+              class="col-md-4"
+              *ngFor="let prescription of getPrescriptions(doctor.doctorId)"
+            >
+              <div class="card prescription-card h-100">
+
+                <!-- Image -->
+                <img
+                  [src]="prescription.imageUrl"
+                  class="card-img-top prescription-img"
+                  alt="Prescription"
+                  (click)="previewImage(prescription.imageUrl, prescription.prescriptionId)"
+                />
+
+                <!-- Content -->
+                <div class="card-body">
+                  <p class="small text-muted mb-1">
+                    Prescription #{{ prescription.prescriptionId }}
+                  </p>
+
+                  <p class="mb-2">
+                    {{ prescription.description || 'No notes provided' }}
+                  </p>
+
+                  <div class="d-flex justify-content-between">
+                    <button
+                      class="btn btn-outline-primary btn-sm"
+                      (click)="previewImage(prescription.imageUrl, prescription.prescriptionId)"
+                    >
+                      <i class="bi bi-eye"></i> View
+                    </button>
+
+                    <button
+                      class="btn btn-outline-success btn-sm"
+                      (click)="downloadPrescription(prescription.imageUrl, prescription.prescriptionId)"
+                    >
+                      <i class="bi bi-download"></i> Download
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div
+              class="col-12 text-center text-muted py-3"
+              *ngIf="getPrescriptions(doctor.doctorId).length === 0"
+            >
+              No prescriptions found.
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div
+  class="modal fade show image-modal"
+  tabindex="-1"
+  *ngIf="showImageModal"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Prescription #{{ selectedPrescriptionId }}
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closeImageModal()"
+        ></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <img
+          [src]="selectedImageUrl"
+          class="img-fluid rounded"
+          alt="Prescription Image"
+        />
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showImageModal"></div>

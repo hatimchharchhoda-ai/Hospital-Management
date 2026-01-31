@@ -65,6 +65,22 @@
   },
   {
     "ContainingType": "backend.Controllers.DoctorController",
+    "Method": "GetAllAppointmentsByDoctor",
+    "RelativePath": "api/Doctor/{doctorId}/appointments/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.DoctorController",
     "Method": "GetTodayAndUpcomingAppointments",
     "RelativePath": "api/Doctor/{doctorId}/appointments/upcoming",
     "HttpMethod": "GET",
@@ -89,6 +105,27 @@
     "Parameters": [
       {
         "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.DoctorController",
+    "Method": "GetPrescriptionsByDoctor",
+    "RelativePath": "api/Doctor/{doctorId}/prescriptions/{patientId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "patientId",
         "Type": "System.Int32",
         "IsRequired": true
       }
@@ -129,6 +166,37 @@
   },
   {
     "ContainingType": "backend.Controllers.DoctorController",
+    "Method": "CreatePrescription",
+    "RelativePath": "api/Doctor/createPrescription",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "DoctorId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PatientId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Description",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Image",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.DoctorController",
     "Method": "GetDoctorId",
     "RelativePath": "api/Doctor/lookup",
     "HttpMethod": "GET",
@@ -139,6 +207,22 @@
         "Name": "identifier",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.DoctorController",
+    "Method": "GetPrescription",
+    "RelativePath": "api/Doctor/prescription/{prescriptionId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "prescriptionId",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -224,6 +308,27 @@
   },
   {
     "ContainingType": "backend.Controllers.PatientController",
+    "Method": "GetPrescriptionsByPatient",
+    "RelativePath": "api/Patient/{patientId}/prescriptions/{doctorId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "patientId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.PatientController",
     "Method": "GetPatientTodayAppointments",
     "RelativePath": "api/Patient/{patientId}/today",
     "HttpMethod": "GET",
@@ -297,6 +402,22 @@
       {
         "Name": "mobile",
         "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.PatientController",
+    "Method": "GetPrescription",
+    "RelativePath": "api/Patient/prescription/{prescriptionId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "prescriptionId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

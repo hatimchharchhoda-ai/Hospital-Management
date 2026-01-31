@@ -90,7 +90,12 @@ namespace backend.Services
                 {
                     new Claim(ClaimTypes.NameIdentifier, id),
                     new Claim(ClaimTypes.Name, name),
-                    new Claim(ClaimTypes.Role, role)
+                    new Claim(ClaimTypes.Role, role),
+                    new Claim(JwtRegisteredClaimNames.Exp,
+                    new DateTimeOffset(DateTime.UtcNow.AddMinutes(
+                        Convert.ToDouble(_config["Jwt:ExpireMinutes"])
+                    )).ToUnixTimeSeconds().ToString()
+                    )       
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(
                     Convert.ToDouble(_config["Jwt:ExpireMinutes"])
