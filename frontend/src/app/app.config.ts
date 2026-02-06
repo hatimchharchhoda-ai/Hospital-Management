@@ -21,6 +21,6 @@ export const appConfig: ApplicationConfig = {
     provideToastr(),
 
      // You can provide your backend API URL as an injectable token
-    { provide: 'API_URL', useValue: 'https://localhost:7210/api' }
+    { provide: 'API_URL', useValue: 'http://localhost:5001/api' }
   ],
 };

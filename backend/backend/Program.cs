@@ -4,19 +4,18 @@ using backend.Interfaces;
 using backend.Middleware;
 using backend.Reposetory;
 using backend.Services;
+using backend.WebSocket;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
 
 // ===================== SERVICES =====================
 
@@ -27,65 +26,83 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     )
 );
 
-// CORS
+// ===================== CORS (🔥 MUST support SignalR) =====================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(MyAllowSpecificOrigins, policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy
+            .WithOrigins("http://localhost:4200") // frontend
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // 🔥 REQUIRED for SignalR
     });
 });
 
-// JWT
+// ===================== JWT =====================
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
-});
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
 
-// Cloudinary settings
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+
+        // 🔥 IMPORTANT: Allow JWT for SignalR
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    path.StartsWithSegments("/chatHub"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// ===================== Cloudinary =====================
 builder.Services.Configure<CloudinarySettings>(
     builder.Configuration.GetSection("CloudinarySettings"));
+
 builder.Services.AddSingleton(provider =>
 {
     var config = provider
         .GetRequiredService<IOptions<CloudinarySettings>>()
         .Value;
 
-    var account = new Account(
+    return new Cloudinary(new Account(
         config.CloudName,
         config.ApiKey,
         config.ApiSecret
-    );
-
-    return new Cloudinary(account);
+    ));
 });
 
-
-builder.Services.AddAuthorization();
+// ===================== Controllers + SignalR =====================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSignalR();
 
-// Swagger + Authorization Header
+// ===================== Swagger =====================
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -100,8 +117,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter: Bearer {your JWT token}"
+        In = ParameterLocation.Header
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -120,7 +136,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Dependency Injection
+// ===================== DI =====================
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
@@ -140,14 +156,13 @@ builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 builder.Services.AddScoped<IPrescriptionService, PrescriptionService>();
 
 builder.Services.AddScoped<IPhotoService, PhotoService>();
-// ===================== APP =====================
 
+// ===================== APP =====================
 var app = builder.Build();
 
-// 🔥 Global exception middleware MUST be FIRST
+// 🔥 Exception middleware FIRST
 app.UseExceptionMiddleware();
 
-// Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -156,12 +171,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// 🔥 CORS MUST be before auth
 app.UseCors(MyAllowSpecificOrigins);
 
-// 🔐 Authentication & Authorization
+// 🔐 Auth
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ===================== ENDPOINTS =====================
+app.MapHub<ChatHub>("/chatHub");
 app.MapControllers();
 
 app.Run();

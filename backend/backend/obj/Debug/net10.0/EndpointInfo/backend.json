@@ -129,7 +129,50 @@
         }
       }
     },
-    "/verify": {
+    "/api/Chat/send": {
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Chat/messages": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Doctor/verify": {
       "get": {
         "tags": [
           "Doctor"
@@ -963,6 +1006,39 @@
         },
         "additionalProperties": false
       },
+      "SendMessageDto": {
+        "required": [
+          "message",
+          "senderId",
+          "senderName",
+          "senderRole"
+        ],
+        "type": "object",
+        "properties": {
+          "senderId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "senderRole": {
+            "minLength": 1,
+            "pattern": "Doctor|Patient|Admin",
+            "type": "string"
+          },
+          "senderName": {
+            "maxLength": 100,
+            "minLength": 2,
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateAppointmentRequest": {
         "type": "object",
         "properties": {
@@ -1019,7 +1095,6 @@
     "securitySchemes": {
       "Bearer": {
         "type": "http",
-        "description": "Enter: Bearer {your JWT token}",
         "scheme": "Bearer",
         "bearerFormat": "JWT"
       }

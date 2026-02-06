@@ -1,0 +1,53 @@
+<div class="chat-page">
+  
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-content">
+      <h2 class="chat-title">Global Chat</h2>
+      <span class="online-status">
+        <span class="status-dot"></span>
+        Online
+      </span>
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div class="chat-messages" #chatBody>
+    <div class="messages-inner">
+      <div
+        *ngFor="let msg of messages"
+        class="message-wrapper"
+        [class.mine]="msg.senderId === tokenService.getUserId()"
+      >
+        <div class="message-bubble">
+          <div class="message-header">
+            <span class="sender-name">{{ msg.senderName }}</span>
+            <span class="sender-role">{{ msg.senderRole }}</span>
+          </div>
+          <div class="message-text">{{ msg.message }}</div>
+          <div class="message-time">{{ msg.sentAt | date:'shortTime' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area (Sticky Bottom) -->
+  <div class="chat-input-container">
+    <div class="chat-input">
+      <input
+        type="text"
+        class="message-input"
+        placeholder="Type your message..."
+        [(ngModel)]="newMessage"
+        (keydown.enter)="send()"
+      />
+      <button class="send-button" (click)="send()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div>

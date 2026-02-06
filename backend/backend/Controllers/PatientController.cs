@@ -1,10 +1,10 @@
 ﻿using backend.DTOs;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PatientController : ControllerBase
@@ -27,6 +27,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Get all patients
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -35,6 +36,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Get patient by id
+        [Authorize(Roles = "Patient")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -43,6 +45,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Update patient
+        [Authorize(Roles = "Patient")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UpdatePatientDto dto)
         {
@@ -51,6 +54,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Check mobile
+        [AllowAnonymous]
         [HttpGet("check-mobile/{mobile}")]
         public async Task<IActionResult> CheckMobile(string mobile)
         {
@@ -59,6 +63,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Add doctor
+        [Authorize(Roles = "Patient")]
         [HttpPost("add-doctor")]
         public async Task<IActionResult> AddDoctor([FromBody] PatientAddDoctorDto dto)
         {
@@ -67,6 +72,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Get doctors by patient
+        [Authorize(Roles = "Patient")]
         [HttpGet("{patientId}/doctors")]
         public async Task<IActionResult> GetDoctorsByPatient(int patientId)
         {
@@ -75,6 +81,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Book appointment
+        [Authorize(Roles = "Patient")]
         [HttpPost("bookAppointment")]
         public async Task<IActionResult> BookAppointment([FromBody] BookAppointmentRequest request)
         {
@@ -88,6 +95,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Get today's appointments for patient
+        [Authorize(Roles = "Patient")]
         [HttpGet("{patientId}/today")]
         public async Task<IActionResult> GetPatientTodayAppointments(int patientId)
         {
@@ -96,6 +104,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Get upcoming appointments for patient
+        [Authorize(Roles = "Patient")]
         [HttpGet("{patientId}/appointments/upcoming")]
         public async Task<IActionResult> GetTodayAndUpcomingAppointments(int patientId)
         {
@@ -104,6 +113,7 @@ namespace backend.Controllers
         }
 
         // 🔹 Update appointment for patient
+        [Authorize(Roles = "Patient")]
         [HttpPut("appointments/update")]
         public async Task<IActionResult> UpdateAppointmentForPatient([FromBody] UpdateAppointmentRequest request)
         {
@@ -112,6 +122,7 @@ namespace backend.Controllers
         }
 
         // 🧑‍🦱 Get all prescriptions for this patient
+        [Authorize(Roles = "Patient")]
         [HttpGet("{patientId}/prescriptions/{doctorId}")]
         public async Task<IActionResult> GetPrescriptionsByPatient(int patientId, int doctorId)
         {
@@ -122,6 +133,7 @@ namespace backend.Controllers
         }
 
         // 🧑‍🦱 Get single prescription
+        [Authorize(Roles = "Patient")]
         [HttpGet("prescription/{prescriptionId}")]
         public async Task<IActionResult> GetPrescription(int prescriptionId)
         {

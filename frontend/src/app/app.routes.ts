@@ -16,6 +16,7 @@ import { AuthNavbar } from './layout/auth-navbar/auth-navbar';
 import { Scheduled } from './patientComponent/scheduled/scheduled';
 import { PatientPrescriptionComponent } from './patientComponent/prescription/prescription';
 import { Medications } from './doctorComponent/medications/medications';
+import { Chat } from './shareComponent/chat/chat';
 
 export const routes: Routes = [
   // 🔐 Auth routes (NO NAVBAR)
@@ -24,8 +25,8 @@ export const routes: Routes = [
     component: AuthNavbar,
     children: [
       { path: '', component: PatientSignup },
-      { path: 'patient-login', component: PatientLogin },
-      { path: 'doctor-login', component: DoctorLogin },
+      { path: 'patient-login', component: PatientLogin, canActivate: [authGuard] },
+      { path: 'doctor-login', component: DoctorLogin, canActivate: [authGuard] },
       { path: 'doctor-signup', component: DoctorSignup },
       { path: 'unauthorized', component: Unauthorized },
     ]
@@ -35,7 +36,7 @@ export const routes: Routes = [
   {
     path: 'patient',
     component: PatientNavbar,
-    // canActivate: [authGuard],
+    canActivateChild: [authGuard],
     data: { role: 'Patient' },
     children: [
       { path: 'home', component: Phome },
@@ -45,6 +46,7 @@ export const routes: Routes = [
       },
       { path: 'scheduled', component: Scheduled },
       { path: 'prescription', component: PatientPrescriptionComponent },
+      { path: 'chat', component: Chat}
     ]
   },
 
@@ -52,13 +54,14 @@ export const routes: Routes = [
   {
     path: 'doctor',
     component: DoctorNavbar,
-    // canActivate: [authGuard],
+    canActivateChild: [authGuard],
     data: { role: 'Doctor' },
     children: [
       { path: 'home', component: DoctorHome },
       { path: 'dashboard', component: Dashboard },
       { path: 'schedule', component: Schedule },
       { path: 'medications', component: Medications },
+      { path: 'chat', component: Chat}
     ]
   },
 
